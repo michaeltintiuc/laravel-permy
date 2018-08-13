@@ -16,7 +16,7 @@ class PermyServiceProvider extends ServiceProvider
      *
      * @var bool
      */
-    protected $defer = true;
+    protected $defer = false;
 
     /**
      * Bootstrap the application events.
@@ -41,8 +41,18 @@ class PermyServiceProvider extends ServiceProvider
             $this->package('michaeltintiuc/laravel-permy');
         }
 
-        if ($this->app->runningInConsole())
+        if ($this->app->runningInConsole()) {
             $this->commands(['MichaelT\Permy\Commands\Can']);
+            return;
+        }
+
+        if (class_exists('Blade')) {
+            if (version_compare($app::VERSION, '5.1.0') >= 0) {
+                new BladeDirectives();
+            } else {
+                new LegacyBladeDirectives();
+            }
+        }
     }
 
     /**
