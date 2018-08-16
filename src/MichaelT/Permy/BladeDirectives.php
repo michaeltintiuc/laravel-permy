@@ -14,6 +14,7 @@ class BladeDirectives
     {
         $this->can();
         $this->cant();
+        $this->closeConditional();
     }
 
     /**
@@ -21,15 +22,10 @@ class BladeDirectives
      *
      * @return string
      */
-    public function can()
+    private function can()
     {
-        \Blade::directive('permyCan', function ($expression) {
-            return "<?php if (Permy::can($expression)): ?>";
-        });
-
-        \Blade::directive('endpermyCan', function ($expression) {
-            return "<?php endif; ?>";
-        });
+        $this->openConditional('permyCan', 'can');
+        $this->closeConditional('endpermyCan');
     }
 
 
@@ -38,13 +34,32 @@ class BladeDirectives
      *
      * @return string
      */
-    public function cant()
+    private function cant()
     {
-        \Blade::directive('permyCant', function ($expression) {
-            return "<?php if (Permy::cant($expression)): ?>";
-        });
+        $this->openConditional('permyCant', 'cant');
+        $this->closeConditional('endpermyCant');
+    }
 
-        \Blade::directive('endpermyCant', function ($expression) {
+    /**
+     * Open conditional helper
+     *
+     * @return string
+     */
+    private function openConditional($function, $method)
+    {
+        \Blade::directive($function, function ($expression) use ($method) {
+            return "<?php if (Permy::$method($expression)): ?>";
+        });
+    }
+
+    /**
+     * Close conditional helper blade directive
+     *
+     * @return string
+     */
+    private function closeConditional($function = 'endpermy')
+    {
+        \Blade::directive($function, function ($expression) {
             return "<?php endif; ?>";
         });
     }

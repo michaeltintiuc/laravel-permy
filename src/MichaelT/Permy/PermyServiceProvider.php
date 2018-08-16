@@ -43,7 +43,6 @@ class PermyServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->commands(['MichaelT\Permy\Commands\Can']);
-            return;
         }
 
         if (class_exists('Blade')) {
